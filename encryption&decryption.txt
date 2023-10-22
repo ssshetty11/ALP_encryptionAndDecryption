@@ -1,0 +1,39 @@
+.data
+message:    .string "shetty"
+key:        .byte 3     # Encryption key
+
+.text
+.globl main
+
+main:
+    # Encryption
+    la  t0, message   # Load the address of the message
+    lb  t1, key       # Load the encryption key
+    mv t2, t0      # Copy the message address to t2
+
+encrypt_loop:
+    lb  t3, 0(t2)   # Load the next character
+    beqz t3, done     # If it's the null terminator, we're done
+    add t3, t3, t1 # Encrypt the character
+    sb  t3, 0(t2)   # Store the encrypted character
+    addi t2, t2, 1  # Move to the next character
+    j   encrypt_loop
+
+done:
+    # Decryption
+    la  t0, message   # Reload the address of the message
+    lb  t1, key       # Reload the decryption key
+    mv t2, t0      # Copy the message address to t2
+
+decrypt_loop:
+    lb  t3, 0(t2)   # Load the next character
+    beqz t3, end      # If it's the null terminator, we're done
+    sub t3, t3, t1 # Decrypt the character
+    sb  t3, 0(t2)   # Store the decrypted character
+    addi t2, t2, 1  # Move to the next character
+    j   decrypt_loop
+
+end:
+    # Terminate the program
+    li  a0, 10
+    nop
